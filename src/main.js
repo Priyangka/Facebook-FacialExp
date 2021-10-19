@@ -33,7 +33,7 @@ CometChat.init(appID, appSetting)
     // You can now call login function.
     createApp(App)
       .use(router)
-      .use(VueNativeSock, "wss://localhost:6868")
+      .use(VueNativeSock, "wss://localhost:6868", { format: 'json' })
       .mount("#app");
   })
   .catch(error => {

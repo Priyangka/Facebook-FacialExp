@@ -1,5 +1,7 @@
 <template>
   <div class="hidden lg:flex flex-col w-60 p-2 mt-5">
+    <HeadGearConnection />
+
     <div class="flex justify-between items-center text-gray-500 mb-5">
       <h2 class="text-xl">Contacts</h2>
       <div class="flex space-x-2">
@@ -22,6 +24,7 @@
 import { SearchIcon } from "@heroicons/vue/outline";
 import { DotsHorizontalIcon, VideoCameraIcon } from "@heroicons/vue/solid";
 import Contact from "./Contact";
+import HeadGearConnection from './HeadGearConnection.vue'
 import { ref } from "vue";
 export default {
   name: "widget",
@@ -42,6 +45,7 @@ export default {
     DotsHorizontalIcon,
     VideoCameraIcon,
     Contact,
+    HeadGearConnection
   },
 };
 </script>

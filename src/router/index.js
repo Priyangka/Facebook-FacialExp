@@ -35,13 +35,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
   },
-
   {
-    path: '/check',
-    name: 'Axios',
+    path: '/train-expression',
+    name: 'Train',
     component: () =>
-      import(/* webpackChunkName: "login" */ '@/views/Hello.vue'),
-  },
+      import(/* webpackChunkName: "train-expression" */ '@/views/Train.vue'),
+  }
 ]
 
 const router = createRouter({
