@@ -72,10 +72,10 @@
 					hover:scale-105
 					cursor-pointer
 				"
-				v-if="imageToPost"
+				v-if="imageToPost || postImage"
 				@click="removeImage"
 			>
-				<img :src="imageToPost" class="h-10 object-contain" />
+				<img :src="imageToPost || postImage" class="h-10 object-contain" />
 				<p class="text-xs text-red-500 text-center">Remove</p>
 			</div>
 		</div>
@@ -103,6 +103,7 @@ export default {
 		const imageToPost = ref(null);
 		const message = ref("");
 		const messagebox = ref(null);
+		const postImage = ref(null);
 
 		onMounted(() => {
 			user.value = JSON.parse(localStorage.getItem("user"));
@@ -128,13 +129,14 @@ export default {
 		}
 
 		const setGif = (gif) => {
-			imageToPost.value = gif
+			postImage.value = gif
 		}
 
 		const onSubmit = () => {
 			if (message.value === "") return;
 			const data = {
 				message: message.value,
+				postImage: postImage.value,
 				name: user.value.displayName,
 				email: user.value.email,
 				image: user.value.photoURL,
@@ -145,33 +147,37 @@ export default {
 			db.collection("posts")
 			.add(data)
 			.then((doc) => {
+				if (postImage.value) {
+					postImage.value = null
+				}
+
 				if (imageToPost.value) {
-				const uploadTask = storage
-					.ref(`posts/${doc.id}`)
-					.putString(imageToPost.value, "data_url");
+					const uploadTask = storage
+						.ref(`posts/${doc.id}`)
+						.putString(imageToPost.value, "data_url");
 
-				removeImage();
+					removeImage();
 
-				uploadTask.on(
-					"state_change",
-					null,
-					(error) => console.log(error),
-					() => {
-					// On a completed upload
-					storage
-						.ref("posts")
-						.child(doc.id)
-						.getDownloadURL()
-						.then((url) => {
-						db.collection("posts").doc(doc.id).set(
-							{
-							postImage: url,
-							},
-							{ merge: true }
-						);
-						});
-					}
-				);
+					uploadTask.on(
+						"state_change",
+						null,
+						(error) => console.log(error),
+						() => {
+							// On a completed upload
+							storage
+								.ref("posts")
+								.child(doc.id)
+								.getDownloadURL()
+								.then((url) => {
+									db.collection("posts").doc(doc.id).set(
+										{
+											postImage: url,
+										},
+										{ merge: true }
+									);
+								});
+						}
+					);
 				}
 
 				message.value = "";
@@ -202,7 +208,8 @@ export default {
 			removeImage,
 			setEmoji,
 			setGif,
-			messagebox
+			messagebox,
+			postImage
 		};
 	},
 	components: {
@@ -217,6 +224,7 @@ export default {
 	.vue3-emojipicker .-top-4 {
 		top: 32rem;
 		right: 0;
+		z-index: 50;
 	}
 
 	div#discord_picker {
